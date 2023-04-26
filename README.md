@@ -1,7 +1,5 @@
 # SnakeGame
 
-Main Project is on Master. 
-
 To play the game, open the SampleSnakeScene and press play. 
 
 Set up the Game on the SnakeGame object. 
