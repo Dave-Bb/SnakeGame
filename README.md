@@ -8,10 +8,10 @@ Set up the Game on the SnakeGame object.
 
 Game settings are handled by GameSettings found in ScriptableObject/GameSettings
 - Set up for player 1 and player 2
-- Game board size and color schemes 
+- Game board size and color schemes
 
 
-Player input is set up inthe Player Control Sceheme objects found in /ScriptableObject/PlayerInput 
+Player input is set up inthe Player Control Scheme objects found in /ScriptableObject/PlayerInput 
 
 Input for Player 1 
 - Up, Down, Left, Right 
