@@ -25,6 +25,9 @@ public class SnakeBoard : MonoBehaviour
    private float gameTickSpeed;
    private List<Snake> snakes = new List<Snake>();
    private float timeSinceLastTick;
+   private int occupiedCells;
+   private int maxOccupiedCells;
+   private Snake removeSnakeOnNextTick;
 
    private ReplayController replayController;
    private float HalfCellWidth => cellWidth * 0.5f;
@@ -95,6 +98,7 @@ public class SnakeBoard : MonoBehaviour
    public void UpdateBoardCell(Vector2Int position, int value)
    {
       board[position.x, position.y] = value;
+      occupiedCells += value == 1 ? 1 : -1; //once this is >= max cells, then the board is full of snakes. 
    }
    
    private void SetUpGame()
@@ -111,6 +115,9 @@ public class SnakeBoard : MonoBehaviour
 
       boardWidth = gameSettings.width;
       boardHeight = gameSettings.height;
+
+      maxOccupiedCells = boardHeight * boardWidth; //when the game is full
+      occupiedCells = 0;
       
       board = new int[boardWidth, boardHeight];
    }
@@ -145,6 +152,8 @@ public class SnakeBoard : MonoBehaviour
       SetUpApple();
 
       gameState = GameState.Playing;
+
+      occupiedCells = 0;
    }
 
    private void SetUpApple()
@@ -194,7 +203,19 @@ public class SnakeBoard : MonoBehaviour
             case GameState.Playing:
                foreach (var snake in snakes)
                {
+                  if (snake == null)
+                  {
+                     continue;
+                  }
+                  
                   RunGameLoop(snake);
+               }
+
+               //Remove dead snakes
+               if (removeSnakeOnNextTick != null)
+               {
+                  snakes.Remove(removeSnakeOnNextTick);
+                  Destroy(removeSnakeOnNextTick.gameObject);
                }
                break;
             case GameState.GameOver:
@@ -231,7 +252,7 @@ public class SnakeBoard : MonoBehaviour
       {
          // Boundary collision
          Debug.LogError($"Game over at {newPosition} for snake {snake.SnakeId}");
-         GameOver(snake.SnakeId);
+         RemoveDeadSnake(snake.SnakeId);
          return;
       }
 
@@ -239,7 +260,14 @@ public class SnakeBoard : MonoBehaviour
       {
          // Self collision
          Debug.LogError($"Game over at {newPosition} for snake {snake.SnakeId}");
-         GameOver(snake.SnakeId);
+         RemoveDeadSnake(snake.SnakeId);
+         return;
+      }
+
+      if (occupiedCells >= maxOccupiedCells)
+      {
+         //Board is full.
+         GameOver();
          return;
       }
 
@@ -279,11 +307,29 @@ public class SnakeBoard : MonoBehaviour
       //Record the position of this apple for use in replays here possibly. 
    }
    
-   private void GameOver(int snakeId)
+   private void GameOver()
    {
       gameState = GameState.GameOver;
       // Implement game over logic, e.g., restart game, show game over screen, etc.
       Debug.Log("Game Over!");
-      Debug.Log(snakeId == 1 ? "Snake 2 Wins!" : "Snake 1 Wins!");
+   }
+
+   private void RemoveDeadSnake(int snakeId)
+   {
+      if (snakes.Count > 1)
+      {
+         removeSnakeOnNextTick = null;
+         foreach (var snake in snakes)
+         {
+            if (snake.SnakeId == snakeId)
+            {
+               removeSnakeOnNextTick = snake; //This is the losing snake in this context
+            }
+         }
+      }
+      else
+      {
+         GameOver();
+      }
    }
 }
