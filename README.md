@@ -14,3 +14,9 @@ Game settings are handled by GameSettings found in ScriptableObject/GameSettings
 
 
 Player input is set up inthe Player Control Sceheme objects found in /ScriptableObject/PlayerInput 
+
+Input for Player 1 
+- Up, Down, Left, Right 
+
+Input for Player 2 
+- WASD 
