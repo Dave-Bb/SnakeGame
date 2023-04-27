@@ -214,6 +214,7 @@ public class SnakeBoard : MonoBehaviour
                //Remove dead snakes
                if (removeSnakeOnNextTick != null)
                {
+                  removeSnakeOnNextTick.CleanUpSnake();
                   snakes.Remove(removeSnakeOnNextTick);
                   Destroy(removeSnakeOnNextTick.gameObject);
                }

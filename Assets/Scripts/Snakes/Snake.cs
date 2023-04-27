@@ -67,7 +67,7 @@ namespace Assets.Scripts.Snakes
         
         private void AddSnakeCell(Vector2Int position)
         {
-            GameObject newCell = Instantiate(cellPrefab, new Vector3((int)position.x, (int)position.y, 0), Quaternion.identity, transform);
+            GameObject newCell = Instantiate(cellPrefab, new Vector3((int) position.x, (int) position.y, 0), Quaternion.identity, transform);
             newCell.GetComponent<SpriteRenderer>().color = snakeColor;
             snakeBody.AddFirst(newCell);
             board.UpdateBoardCell(position, 1);
@@ -85,7 +85,7 @@ namespace Assets.Scripts.Snakes
 
         private Vector2Int GetHeadPosition()
         {
-            return new Vector2Int((int)snakeBody.First.Value.transform.position.x, (int)snakeBody.First.Value.transform.position.y);
+            return new Vector2Int((int) snakeBody.First.Value.transform.position.x, (int) snakeBody.First.Value.transform.position.y);
         }
         
         public void AddSnakeCellAtNewPosition(Vector2Int newPosition)
@@ -96,7 +96,7 @@ namespace Assets.Scripts.Snakes
         public void MoveSnake(Vector2Int newPosition)
         {
             GameObject tail = snakeBody.Last.Value;
-            Vector2Int tailPosition = new Vector2Int((int)tail.transform.position.x, (int)tail.transform.position.y);
+            Vector2Int tailPosition = new Vector2Int((int) tail.transform.position.x, (int) tail.transform.position.y);
             board.UpdateBoardCell(tailPosition, 0);
 
             tail.transform.position = new Vector3(newPosition.x, newPosition.y, 0);
@@ -104,6 +104,21 @@ namespace Assets.Scripts.Snakes
             snakeBody.AddFirst(tail);
     
             board.UpdateBoardCell(newPosition, 1);
+        }
+
+        /// <summary>
+        /// This will clean up the used cells on the board from this snake
+        /// </summary>
+        public void CleanUpSnake()
+        {
+            for (int i = 0; i <= snakeBody.Count; i++)
+            {
+                var first = snakeBody.First.Value;
+                
+                Vector2Int firstPosition = new Vector2Int((int) first.transform.position.x, (int) first.transform.position.y);
+                board.UpdateBoardCell(firstPosition, 0);
+                snakeBody.RemoveFirst();
+            }
         }
 
     }
